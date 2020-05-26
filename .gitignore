@@ -1,0 +1,10 @@
+RobotTools/bin/
+RobotToolsTests/bin/
+
+RobotTools/obj/
+RobotToolsTests/obj/
+
+bin/
+obj/
+
+.vscode/
