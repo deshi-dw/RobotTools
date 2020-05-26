@@ -1,3 +1,4 @@
+using System.Threading;
 using System;
 using System.Linq;
 using System.Net;
@@ -8,7 +9,7 @@ namespace RobotTools
 {
 	public class NetworkConnector
 	{
-		private long connectionTimeout = 1000;
+		private long connectionTimeout = 100;
 		public long ConnectionTimeout
 		{
 			get => connectionTimeout;
@@ -17,7 +18,7 @@ namespace RobotTools
 				connectionTimeout = Math.Max(0, value);
 			}
 		}
-		private long delayBeforeRetry = 100;
+		private long delayBeforeRetry = 10;
 		public long DelayBeforeRetry
 		{
 			get => delayBeforeRetry;
@@ -33,7 +34,7 @@ namespace RobotTools
 
 		public ConnectionError LastError { get; private set; }
 
-		public async Task<Socket> TryConnecting(IPAddress address, int port, Protocol protocol)
+		public Socket TryConnecting(IPAddress address, int port, Protocol protocol)
 		{
 			if (address == null)
 			{
@@ -73,7 +74,7 @@ namespace RobotTools
 					}
 				}
 
-				await Task.Delay((int)DelayBeforeRetry);
+				Thread.Sleep((int)DelayBeforeRetry);
 				timeout += DelayBeforeRetry;
 
 				if (timeout >= ConnectionTimeout)

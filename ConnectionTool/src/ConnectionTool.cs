@@ -153,7 +153,7 @@ namespace RobotTools.ConnectionToolPlugin
 				Console.WriteLine($"successfully connected to server. ({remote})");
 			});
 
-			int __extra_timeout = 30;
+			int __extra_timeout = 50;
 			while (__extra_timeout >= 0 && waiting)
 			{
 				__extra_timeout--;

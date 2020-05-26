@@ -31,15 +31,19 @@ namespace RobotTools.ConnectionToolPlugin
 
 		public override async void Request(Command request, Callback callback)
 		{
-			Socket socket = await connector.TryConnecting(request.address, request.port, request.protocol);
+			Task<Socket> socketTask = Task.Run(() => connector.TryConnecting(request.address, request.port, request.protocol));
+			Socket socket = await socketTask;
+
+			IPEndPoint remote = null;
 
 			if (socket != null)
 			{
 				tool.Reader = new RtcsReader(new NetworkStream(socket));
 				tool.Writer = new RtcsWriter(new NetworkStream(socket));
+				remote = (IPEndPoint)socket.RemoteEndPoint;
 			}
 
-			callback?.Invoke(connector.LastError, (IPEndPoint)socket.RemoteEndPoint);
+			callback?.Invoke(connector.LastError, remote);
 		}
 	}
 }

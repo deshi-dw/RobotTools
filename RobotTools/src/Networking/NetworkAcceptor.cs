@@ -14,7 +14,7 @@ namespace RobotTools
 
 		// @todo: TryAccepting uses a listener socket that is created and deleted every call
 		// @body: This could be quite expensive.
-		public async Task<Socket> TryAccepting(int localport, Protocol protocol)
+		public Socket TryAccepting(int localport, Protocol protocol)
 		{
 			Socket listener = null;
 			IPAddress localaddress = Dns.GetHostEntry("localhost").AddressList[0];
@@ -40,7 +40,7 @@ namespace RobotTools
 				listener.Listen(6);
 			}
 
-			Socket client = await listener.AcceptAsync();
+			Socket client = listener.Accept();
 
 			return client;
 		}
