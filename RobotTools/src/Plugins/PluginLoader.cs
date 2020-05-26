@@ -49,27 +49,6 @@ namespace RobotTools
 						}
 
 						plugins.Add(data);
-
-						// get use interfaces.
-						Type[] interfaces = type.GetInterfaces();
-						foreach (Type _interface in interfaces)
-						{
-							if (_interface.GetGenericTypeDefinition() == typeof(IUse<>))
-							{
-								Type useInterface = _interface;
-								Type useType = _interface.GenericTypeArguments[0];
-
-								if (usables.ContainsKey(useType))
-								{
-									usables[useType].Add(useInterface);
-								}
-								else
-								{
-									usables.Add(useType, new List<Type>());
-									usables[useType].Add(useInterface);
-								}
-							}
-						}
 					}
 				}
 			}
@@ -77,17 +56,6 @@ namespace RobotTools
 			foreach (PluginData plugin in plugins)
 			{
 				constructed.Add((Plugin)Activator.CreateInstance(plugin.pluginType));
-			}
-		}
-
-		public void AssignAll<T>(T entity)
-		{
-			foreach (Type usable in usables[typeof(T)])
-			{
-				if (usables.ContainsKey(typeof(T)))
-				{
-					((IUse<T>)usable).Assign(entity);
-				}
 			}
 		}
 
