@@ -24,11 +24,6 @@ namespace RobotTools.ConnectionToolPlugin
 			public Protocol protocol;
 		}
 
-		public Connect(ConnectionTool tool)
-		{
-			this.tool = tool;
-		}
-
 		public override async void Request(Command request, Callback callback)
 		{
 			Task<Socket> socketTask = Task.Run(() => connector.TryConnecting(request.address, request.port, request.protocol));
