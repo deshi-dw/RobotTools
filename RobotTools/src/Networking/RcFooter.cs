@@ -1,6 +1,6 @@
 namespace RobotTools
 {
-	public struct RtcsFooter
+	public struct RcFooter
 	{
 		public string footerId;
 		public uint footerSize;

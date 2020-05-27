@@ -2,21 +2,21 @@ using System.IO;
 
 namespace RobotTools
 {
-	public class RtcsReader
+	public class RcReader
 	{
 		private Stream stream;
 		private BinaryReader binary;
 
 
-		public RtcsReader(Stream stream)
+		public RcReader(Stream stream)
 		{
 			this.stream = stream;
 			this.binary = new BinaryReader(this.stream);
 		}
 
-		public RtcsHeader ReadHeader()
+		public RcHeader ReadHeader()
 		{
-			RtcsHeader header = new RtcsHeader();
+			RcHeader header = new RcHeader();
 			int pos1 = (int)binary.BaseStream.Position;
 
 			header.headerId = new string(binary.ReadChars(4));
@@ -34,9 +34,9 @@ namespace RobotTools
 
 			return header;
 		}
-		public RtcsFooter ReadFooter()
+		public RcFooter ReadFooter()
 		{
-			RtcsFooter footer = new RtcsFooter();
+			RcFooter footer = new RcFooter();
 
 			footer.footerId = new string(binary.ReadChars(4));
 			footer.footerSize = binary.ReadUInt32();
@@ -46,9 +46,9 @@ namespace RobotTools
 
 			return footer;
 		}
-		public RtcsEvent ReadEvent()
+		public RcEvent ReadEvent()
 		{
-			RtcsEvent rtcsEvent = new RtcsEvent();
+			RcEvent rtcsEvent = new RcEvent();
 
 			rtcsEvent.id = binary.ReadUInt16();
 			rtcsEvent.size = binary.ReadUInt32();

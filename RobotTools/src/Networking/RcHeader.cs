@@ -1,6 +1,6 @@
 namespace RobotTools
 {
-	public struct RtcsHeader
+	public struct RcHeader
 	{
 		public string headerId;
 		public uint headerSize;

@@ -1,6 +1,6 @@
 namespace RobotTools
 {
-	public struct RtcsEvent
+	public struct RcEvent
 	{
 		public ushort id;
 		public uint size;

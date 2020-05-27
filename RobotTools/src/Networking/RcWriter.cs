@@ -3,18 +3,18 @@ using System.Net.Sockets;
 
 namespace RobotTools
 {
-	public class RtcsWriter
+	public class RcWriter
 	{
 		private Stream stream;
 		private BinaryWriter binary;
 
-		public RtcsWriter(Stream stream)
+		public RcWriter(Stream stream)
 		{
 			this.stream = stream;
 			this.binary = new BinaryWriter(this.stream);
 		}
 
-		public int WriteHeader(RtcsHeader header)
+		public int WriteHeader(RcHeader header)
 		{
 			int pos1 = (int)binary.BaseStream.Position;
 
@@ -28,7 +28,7 @@ namespace RobotTools
 			return (int)binary.BaseStream.Position - pos1;
 		}
 
-		public int WriteFooter(RtcsFooter footer)
+		public int WriteFooter(RcFooter footer)
 		{
 			int pos1 = (int)binary.BaseStream.Position;
 
@@ -42,7 +42,7 @@ namespace RobotTools
 			return (int)binary.BaseStream.Position - pos1;
 		}
 
-		public int WriteEvent(RtcsEvent rtcsEvent)
+		public int WriteEvent(RcEvent rtcsEvent)
 		{
 			int pos1 = (int)binary.BaseStream.Position;
 
