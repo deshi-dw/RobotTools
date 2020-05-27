@@ -8,9 +8,20 @@ namespace RobotTools
 	{
 		public string Text { get => Version.ToString(3); }
 		public Version Version { get; private set; }
-		public VersionAttribute(Version version)
+		public VersionAttribute(string version)
 		{
-			Version = version;
+			Version ver;
+			if (Version.TryParse(version, out ver) == false)
+			{
+				throw new FormatException("The version string provided is invalid");
+			}
+
+			this.Version = ver;
+		}
+
+		public VersionAttribute(int major, int minor, int build)
+		{
+			this.Version = new Version(major, minor, build);
 		}
 	}
 }
