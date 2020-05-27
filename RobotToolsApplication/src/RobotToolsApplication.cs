@@ -12,7 +12,7 @@ namespace RobotTools.Application
 			PluginFinder finder = new PluginFinder($"{currentDir}\\plugins");
 			PluginLoader loader = new PluginLoader(finder.FindAll());
 
-			loader.EnableAll();
+			// loader.EnableAll();
 		}
 	}
 }
