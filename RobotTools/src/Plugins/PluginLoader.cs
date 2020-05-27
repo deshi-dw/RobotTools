@@ -5,21 +5,17 @@ using System.Reflection;
 
 namespace RobotTools
 {
-	// @todo: Add enable/disable plugin feature
-	// @body: plugins need to be able to be individually turned on and off.
 	public class PluginLoader
 	{
-		private List<PluginData> plugins = new List<PluginData>();
-		private List<Plugin> constructed = new List<Plugin>();
-		private Dictionary<Type, List<Type>> usables = new Dictionary<Type, List<Type>>();
-
 		public PluginLoader(Assembly[] assemblies)
 		{
 			Load(assemblies);
 		}
 
-		public void Load(Assembly[] assemblies)
+		public PluginIdentifier[] Load(Assembly[] assemblies)
 		{
+			List<PluginIdentifier> pluginIdentifiers = new List<PluginIdentifier>();
+
 			foreach (Assembly assembly in assemblies)
 			{
 				Type[] types = assembly.GetExportedTypes();
@@ -38,33 +34,43 @@ namespace RobotTools
 						foreach (object attribute in attributes)
 						{
 
-							if (attribute is PluginNameAttribute name)
+							if (attribute is NameAttribute name)
 							{
-								data.name = name.Value;
+								data.name = name.Text;
 							}
-							if (attribute is PluginDescriptionAttribute description)
+							else if (attribute is DescriptionAttribute description)
 							{
-								data.description = description.Value;
+								data.description = description.Text;
+							}
+							else if (attribute is IdAttribute id)
+							{
+								data.id = id.Text;
+							}
+							else if (attribute is VersionAttribute version)
+							{
+								data.version = version.Version;
+							}
+							else if (attribute is AuthorAttribute author)
+							{
+								data.author = author.Name;
+							}
+							else if (attribute is CompatibleAttribute compatible)
+							{
+								data.compatiable = compatible.Version;
+							}
+							else if (attribute is DependenciesAttribute dependencies)
+							{
+								data.dependencies = dependencies.Dependencies;
 							}
 						}
 
-						plugins.Add(data);
+						Plugin plugin = (Plugin)Activator.CreateInstance(data.pluginType);
+						pluginIdentifiers.Add(new PluginIdentifier() { plugin = plugin, data = data });
 					}
 				}
 			}
 
-			foreach (PluginData plugin in plugins)
-			{
-				constructed.Add((Plugin)Activator.CreateInstance(plugin.pluginType));
-			}
-		}
-
-		public void EnableAll()
-		{
-			foreach (Plugin plugin in constructed)
-			{
-				plugin.Enable();
-			}
+			return pluginIdentifiers.ToArray();
 		}
 	}
 }
