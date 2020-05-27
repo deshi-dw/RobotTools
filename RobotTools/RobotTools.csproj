@@ -9,7 +9,7 @@
 
 		<Configuration>Debug</Configuration>
 
-		<OutputPath>$(SolutionDir)/bin</OutputPath>
+		<OutputPath>$(ProjectDir)..\bin</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 

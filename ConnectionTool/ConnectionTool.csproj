@@ -9,7 +9,7 @@
 
 		<Configuration>Debug</Configuration>
 
-		<OutputPath>$(SolutionDir)/bin/plugins</OutputPath>
+		<OutputPath>$(ProjectDir)..\bin\plugins</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<BuildProjectReferences>false</BuildProjectReferences>
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
@@ -35,7 +35,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!-- <ProjectReference Include="$(SolutionDir)\RobotTools\RobotTools.csproj" ReferenceOutputAssembly="false" /> -->
-		<Reference Include="RobotTools.dll" HintPath="$(SolutionDir)\bin\RobotTools.dll" Private="true" />
+		<Reference Include="RobotTools.dll" HintPath="$(ProjectDir)..\bin\RobotTools.dll" Private="true" />
 	</ItemGroup>
 </Project>
