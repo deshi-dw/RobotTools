@@ -36,5 +36,8 @@
 
 	<ItemGroup>
 		<Reference Include="RobotTools.dll" HintPath="$(ProjectDir)..\bin\RobotTools.dll" Private="true" />
+		<ProjectReference Include="$(ProjectDir)..\RobotTools\RobotTools.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
 	</ItemGroup>
 </Project>

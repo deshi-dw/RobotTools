@@ -36,6 +36,13 @@
 
 	<ItemGroup>
 		<Reference Include="RobotTools.dll" HintPath="$(ProjectDir)..\bin\RobotTools.dll" Private="true" />
-		<Reference Include="RobotTools.dll" HintPath="$(ProjectDir)..\bin\plugins\MainClPlugin.dll" Private="true" />
+		<ProjectReference Include="$(ProjectDir)..\RobotTools\RobotTools.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+
+		<Reference Include="MainClPlugin.dll" HintPath="$(ProjectDir)..\bin\plugins\MainClPlugin.dll" Private="true" />
+		<ProjectReference Include="$(ProjectDir)..\MainClPlugin\MainClPlugin.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
 	</ItemGroup>
 </Project>
