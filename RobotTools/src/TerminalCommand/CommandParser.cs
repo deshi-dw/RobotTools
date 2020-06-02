@@ -20,9 +20,25 @@ namespace RobotTools
 
 		public string GetNext()
 		{
+			string result = string.Empty;
+			index = GetNextInternal(result);
+
+			return result;
+		}
+
+		public string Peek()
+		{
+			string result = string.Empty;
+			GetNextInternal(result);
+
+			return result;
+		}
+
+		private int GetNextInternal(string result)
+		{
 			if (index == input.Length)
 			{
-				return string.Empty;
+				return 0;
 			}
 
 			int end = input.IndexOf(' ', index + 1);
@@ -34,14 +50,13 @@ namespace RobotTools
 
 			if (end == index)
 			{
-				return string.Empty;
+				return 0;
 			}
 
 			string value = input.Substring(index, end - index).Trim();
 
-			index = end;
-
-			return value;
+			result = value;
+			return end;
 		}
 	}
 }
