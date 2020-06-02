@@ -19,7 +19,9 @@ namespace RobotTools
 				throw new DirectoryNotFoundException();
 			}
 
-			this.directory = directory;
+			this.directory = new DirectoryInfo(directory).FullName;
+
+			AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
 		}
 
 		public Assembly[] FindAll()
@@ -29,17 +31,10 @@ namespace RobotTools
 
 			foreach (string path in paths)
 			{
-				if (Path.GetExtension(path) == ".dll")
+				Assembly plugin = GetAssembly(path);
+				if (plugin != null)
 				{
-					try
-					{
-						plugins.Add(Assembly.LoadFile(path));
-					}
-					// @todo Handle exception
-					catch (BadImageFormatException ex)
-					{
-						throw ex;
-					}
+					plugins.Add(plugin);
 				}
 			}
 
@@ -53,22 +48,54 @@ namespace RobotTools
 
 			foreach (string path in paths)
 			{
-				if (Path.GetExtension(path) == "dll" && Path.GetFileName(path) == pluginName)
+				if (Path.GetFileName(path) == pluginName)
 				{
-					try
-					{
-						plugin = Assembly.LoadFile(path);
-					}
-					// @todo Handle exception
-					catch (BadImageFormatException ex)
-					{
-						throw ex;
-					}
-
+					plugin = GetAssembly(path);
+					break;
 				}
 			}
 
 			return plugin;
+		}
+
+		private Assembly GetAssembly(string path)
+		{
+			if (Path.GetExtension(path) == ".dll")
+			{
+				try
+				{
+					return Assembly.LoadFile(path);
+				}
+				// @todo Handle exception
+				catch (BadImageFormatException ex)
+				{
+					throw ex;
+				}
+			}
+
+			return null;
+		}
+
+		private Assembly ResolveAssembly(object sender, ResolveEventArgs args)
+		{
+			AssemblyName[] assemblyNames = args.RequestingAssembly.GetReferencedAssemblies();
+
+			Console.WriteLine($"Failed to find all the dependencies for '{args.RequestingAssembly.GetName().Name}'");
+			Console.Write($"Looking for '{args.Name.Substring(0, args.Name.IndexOf(','))}'... ");
+
+			foreach (AssemblyName name in assemblyNames)
+			{
+				string shortName = args.Name.Substring(0, args.Name.IndexOf(','));
+				if (shortName == name.Name)
+				{
+					string path = $"{directory}\\{shortName}.dll";
+
+					Console.WriteLine($"Found '{name.Name}'. Adding reference to '{path}'");
+					return GetAssembly(path);
+				}
+			}
+
+			return null;
 		}
 	}
 }
