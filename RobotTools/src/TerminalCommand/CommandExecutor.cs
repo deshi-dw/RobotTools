@@ -61,6 +61,7 @@ namespace RobotTools
 			if (commands.ContainsKey(command) == false)
 			{
 				// TODO: Errorcheck
+				return;
 			}
 
 			string[] args = new string[commands[command].argumentCount];
