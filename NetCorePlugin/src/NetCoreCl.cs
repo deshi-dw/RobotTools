@@ -1,6 +1,7 @@
+using System.Text;
 using System;
 using System.Net;
-
+using System.Threading.Tasks;
 using RobotTools.MainClPlugin;
 
 namespace RobotTools.NetCorePlugin
@@ -26,12 +27,22 @@ namespace RobotTools.NetCorePlugin
 			net = manager.Get<NetCore>();
 			executor = manager.Get<MainCl>().Executor;
 
-			executor.Register("connect", 3, OnConnect);
+			executor.Register("connect", 2, OnConnect);
+			executor.Register("disconnect", 0, OnDisconnect);
+			executor.Register("send-tcp", 1, OnSendTcp);
+			executor.Register("send-udp", 1, OnSendUdp);
+			executor.Register("receive-tcp", 1, OnReceiveTcp);
+			executor.Register("receive-udp", 1, OnReceiveUdp);
 		}
 
 		public NetCoreCl(CommandExecutor executor)
 		{
 			this.executor = executor;
+		}
+
+		public NetCoreCl()
+		{
+			this.executor = new CommandExecutor(new CommandParser());
 		}
 
 		public void OnConnect(string[] args)
@@ -55,53 +66,73 @@ namespace RobotTools.NetCorePlugin
 				return;
 			}
 
-			int port;
-			if (Int32.TryParse(args[1], out port) == false)
+			if (Int32.TryParse(args[1], out int port) == false)
 			{
 				Error("Failed to parse port.");
 				return;
 			}
 
-			Protocol protocol = Protocol.TCP;
-
-			if (args[2] == "tcp")
-			{
-				protocol = Protocol.TCP;
-			}
-			else if (args[2] == "udp")
-			{
-				protocol = Protocol.UDP;
-			}
-			else
-			{
-				Error("invalid protocol.");
-			}
-
-			// execute command.
-			net.Connect.Request(new ConnectCommand(address, port, protocol), OnConnectCallback);
+			Task.Run(() => net.Connect(address, port)).ContinueWith((Task<ConnectStatus> status) => OnConnectCallback(status.Result));
 			executor.Wait(1000);
 		}
 
-		public void OnConnectCallback(ConnectionError error, IPEndPoint remote)
+		public void OnConnectCallback(ConnectStatus error)
 		{
-			if (error == ConnectionError.CONNECTION_TIMED_OUT)
+			if (error == ConnectStatus.TIMED_OUT)
 			{
 				Error("connection timed out.");
 				return;
 			}
-			else if (error == ConnectionError.CONNECTION_REFUSED)
+			else if (error == ConnectStatus.REFUSED)
 			{
 				Error("connection was refused.");
 				return;
 			}
-			else if (error == ConnectionError.INVALID_IPADDRESS)
+			else if (error == ConnectStatus.UNKNOWN_ERROR)
 			{
-				Error("invalid address.");
+				Error("unkown error.");
 				return;
 			}
 
-			Console.WriteLine($"successfully connected to server. ({remote})");
+			Console.WriteLine($"successfully connected to the server.");
 			executor.Resume();
+		}
+
+		public void OnDisconnect(string[] args)
+		{
+			Task.Run(() => net.Disconnect()).ContinueWith((Task task) => OnDisconnectCallback());
+			executor.Wait(100);
+		}
+		public void OnDisconnectCallback()
+		{
+			Console.WriteLine($"successfully disconnected from the server.");
+			executor.Resume();
+		}
+
+		public void OnSendTcp(string[] args)
+		{
+			Task.Run(() => net.SendTcp(Encoding.ASCII.GetBytes("Hello world."))).ContinueWith((Task task) => OnSendCallback());
+		}
+
+		public void OnSendUdp(string[] args)
+		{
+			Task.Run(() => net.SendUdp(Encoding.ASCII.GetBytes("Hello world."))).ContinueWith((Task task) => OnSendCallback());
+		}
+
+		public void OnReceiveTcp(string[] args)
+		{
+			Task.Run(() => net.ReceiveTcp()).ContinueWith((Task<byte[]> data) => OnReceiveCallback(data.Result));
+		}
+
+		public void OnReceiveUdp(string[] args)
+		{
+			Task.Run(() => net.ReceiveUdp()).ContinueWith((Task<byte[]> data) => OnReceiveCallback(data.Result));
+		}
+
+		public void OnSendCallback() { }
+		public void OnReceiveCallback(byte[] data)
+		{
+			Console.WriteLine($"received: {Encoding.ASCII.GetString(data)}");
 		}
 
 		private void Error(string error)
