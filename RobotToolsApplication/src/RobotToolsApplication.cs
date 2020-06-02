@@ -12,7 +12,8 @@ namespace RobotTools.Application
 			PluginFinder finder = new PluginFinder($"{currentDir}\\plugins");
 			PluginLoader loader = new PluginLoader(finder.FindAll());
 
-			// loader.EnableAll();
+			PluginManager manager = new PluginManager(loader, finder);
+			manager.EnableAll();
 		}
 	}
 }
