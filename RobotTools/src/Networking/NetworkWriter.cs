@@ -33,6 +33,7 @@ namespace RobotTools
 		public void Send()
 		{
 			Send((int)(stream.Length - stream.Position));
+			Flush();
 		}
 
 		public void Flush()

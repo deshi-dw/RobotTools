@@ -12,10 +12,10 @@ namespace RobotTools
 		public Socket BaseSocket => reader;
 		public Stream BaseStream => stream;
 
-		public NetworkReader(Socket reader)
+		public NetworkReader(Socket reader, Stream stream)
 		{
 			this.reader = reader;
-			stream = new MemoryStream();
+			this.stream = stream;
 		}
 
 		public byte[] Read(int count)
@@ -29,14 +29,14 @@ namespace RobotTools
 			return bytes;
 		}
 
-		public byte[] Read()
+		public byte[] Receive()
 		{
 			return Read(reader.Available);
 		}
 
 		public void Flush()
 		{
-			Read();
+			Receive();
 		}
 
 		public void Close()

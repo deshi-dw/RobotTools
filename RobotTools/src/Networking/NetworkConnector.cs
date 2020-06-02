@@ -32,13 +32,13 @@ namespace RobotTools
 		{
 		}
 
-		public ConnectionError LastError { get; private set; }
+		public SocketError LastError { get; private set; }
 
 		public Socket TryConnecting(IPAddress address, int port, Protocol protocol)
 		{
 			if (address == null)
 			{
-				LastError = ConnectionError.INVALID_IPADDRESS;
+				LastError = SocketError.AddressNotAvailable;
 				return null;
 			}
 
@@ -64,14 +64,7 @@ namespace RobotTools
 				}
 				catch (SocketException ex)
 				{
-					if (ex.SocketErrorCode == SocketError.TimedOut)
-					{
-						LastError = ConnectionError.CONNECTION_TIMED_OUT;
-					}
-					else if (ex.SocketErrorCode == SocketError.ConnectionRefused)
-					{
-						LastError = ConnectionError.CONNECTION_REFUSED;
-					}
+					LastError = ex.SocketErrorCode;
 				}
 
 				Thread.Sleep((int)DelayBeforeRetry);
@@ -89,7 +82,7 @@ namespace RobotTools
 
 			if (socket.Connected == false)
 			{
-				LastError = ConnectionError.CONNECTION_TIMED_OUT;
+				LastError = SocketError.TimedOut;
 				socket.Dispose();
 				return null;
 			}
