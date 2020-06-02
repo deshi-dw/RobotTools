@@ -22,7 +22,7 @@ namespace RobotTools
 
 				foreach (Type type in types)
 				{
-					if (type.BaseType != null && type.BaseType.BaseType == typeof(Plugin))
+					if (type.BaseType == typeof(Plugin))
 					{
 						PluginData data = new PluginData();
 
