@@ -1,18 +1,23 @@
+using System;
 using System.Collections.Generic;
 
 namespace RobotTools
 {
 	public class PluginManager
 	{
-		private List<PluginIdentifier> pluginIdentifiers = new List<PluginIdentifier>();
+		private readonly List<PluginIdentifier> pluginIdentifiers = new List<PluginIdentifier>();
 
-		public PluginLoader Loader { get; private set; }
-		public PluginFinder Finder { get; private set; }
+		public event Action OnEnableEnd;
+		public event Action OnDisableEnd;
 
 		public PluginManager(PluginLoader loader, PluginFinder finder)
 		{
-			this.Loader = loader;
-			this.Finder = finder;
+			pluginIdentifiers.AddRange(loader.Load(finder.FindAll()));
+		}
+
+		public PluginManager(PluginIdentifier[] identifiers)
+		{
+			pluginIdentifiers.AddRange(identifiers);
 		}
 
 		public void AddPlugin(PluginIdentifier plugin)
@@ -43,6 +48,8 @@ namespace RobotTools
 			{
 				pluginId.plugin.Enable(this);
 			}
+
+			OnEnableEnd?.Invoke();
 		}
 		public void DisableAll()
 		{
@@ -50,6 +57,8 @@ namespace RobotTools
 			{
 				pluginId.plugin.Disable();
 			}
+
+			OnDisableEnd?.Invoke();
 		}
 
 		public void Enable(string id)

@@ -9,10 +9,10 @@ namespace RobotTools.Application
 		private static void Main(string[] args)
 		{
 			string currentDir = AppDomain.CurrentDomain.BaseDirectory;
-			PluginFinder finder = new PluginFinder($"{currentDir}\\plugins");
-			PluginLoader loader = new PluginLoader(finder.FindAll());
+			PluginFinder finder = new PluginFinder($"{currentDir}plugins");
+			PluginLoader loader = new PluginLoader();
 
-			PluginManager manager = new PluginManager(loader, finder);
+			PluginManager manager = new PluginManager(loader.Load(finder.FindAll()));
 			manager.EnableAll();
 		}
 	}

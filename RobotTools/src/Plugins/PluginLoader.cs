@@ -7,10 +7,7 @@ namespace RobotTools
 {
 	public class PluginLoader
 	{
-		public PluginLoader(Assembly[] assemblies)
-		{
-			Load(assemblies);
-		}
+		public PluginLoader() { }
 
 		public PluginIdentifier[] Load(Assembly[] assemblies)
 		{
@@ -30,10 +27,10 @@ namespace RobotTools
 						data.pluginType = type;
 
 						// get plugin attributes.
-						object[] attributes = type.GetCustomAttributes(typeof(Plugin), true);
+						object[] attributes = type.GetCustomAttributes(false);
+
 						foreach (object attribute in attributes)
 						{
-
 							if (attribute is NameAttribute name)
 							{
 								data.name = name.Text;
@@ -64,7 +61,15 @@ namespace RobotTools
 							}
 						}
 
-						Plugin plugin = (Plugin)Activator.CreateInstance(data.pluginType);
+						Plugin plugin = null;
+						try
+						{
+							plugin = (Plugin)Activator.CreateInstance(data.pluginType);
+						}
+						catch (Exception ex)
+						{
+							Console.WriteLine($"Couldn't load the plugin {data.id}. ({ex.Message})");
+						}
 						pluginIdentifiers.Add(new PluginIdentifier() { plugin = plugin, data = data });
 					}
 				}
