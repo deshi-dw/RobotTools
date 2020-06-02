@@ -35,14 +35,8 @@ namespace RobotTools.NetCorePlugin
 			executor.Register("receive-udp", 1, OnReceiveUdp);
 		}
 
-		public NetCoreCl(CommandExecutor executor)
-		{
-			this.executor = executor;
-		}
-
 		public NetCoreCl()
 		{
-			this.executor = new CommandExecutor(new CommandParser());
 		}
 
 		public void OnConnect(string[] args)
@@ -72,7 +66,7 @@ namespace RobotTools.NetCorePlugin
 				return;
 			}
 
-			Task.Run(() => net.Connect(address, port)).ContinueWith((Task<ConnectStatus> status) => OnConnectCallback(status.Result));
+			Task.Run(() => OnConnectCallback(net.Connect(address, port)));
 			executor.Wait(1000);
 		}
 

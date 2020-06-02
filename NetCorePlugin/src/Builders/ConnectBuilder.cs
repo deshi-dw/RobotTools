@@ -41,6 +41,11 @@ namespace RobotTools
 				}
 			}
 
+			if (status == ConnectStatus.SUCCESS && socket.Connected == false)
+			{
+				status = ConnectStatus.UNKNOWN_ERROR;
+			}
+
 			return status;
 		}
 	}

@@ -16,7 +16,10 @@ namespace RobotTools
 
 		private void Disconnect()
 		{
-			socket.Disconnect(true);
+			if (socket.Connected == true)
+			{
+				socket.Disconnect(true);
+			}
 		}
 	}
 }

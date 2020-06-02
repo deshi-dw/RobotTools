@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Sockets;
 
 namespace RobotTools.NetCorePlugin
@@ -13,19 +14,11 @@ namespace RobotTools.NetCorePlugin
 
 		private NetCoreData data;
 
-		public override void Disable()
-		{
-			Connect = null;
-			Disconnect = null;
-			SendTcp = null;
-			SendUdp = null;
-			ReceiveTcp = null;
-			ReceiveUdp = null;
-		}
-
 		public override void Enable(PluginManager manager)
 		{
 			data = new NetCoreData();
+			data.tcp = new Socket(SocketType.Stream, ProtocolType.Tcp);
+			data.udp = new Socket(SocketType.Dgram, ProtocolType.Udp);
 
 			Connect += new ConnectBuilder().Build(data.tcp);
 			Connect += new ConnectBuilder().Build(data.udp);
@@ -38,6 +31,16 @@ namespace RobotTools.NetCorePlugin
 
 			ReceiveTcp += new ReceiveBuilder().Build(data.tcp);
 			ReceiveUdp += new ReceiveBuilder().Build(data.udp);
+		}
+
+		public override void Disable()
+		{
+			Connect = null;
+			Disconnect = null;
+			SendTcp = null;
+			SendUdp = null;
+			ReceiveTcp = null;
+			ReceiveUdp = null;
 		}
 	}
 }
